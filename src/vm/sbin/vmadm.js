@@ -27,7 +27,6 @@
 
 var async = require('/usr/node/node_modules/async');
 var fs = require('fs');
-var fwlog = require('/usr/fw/lib/util/log');
 var VM = require('/usr/vm/node_modules/VM');
 var nopt = require('/usr/vm/node_modules/nopt');
 var onlyif = require('/usr/node/node_modules/onlyif');
@@ -157,7 +156,7 @@ function usage(message, code)
     out('lookup [-j|-1] [-o field,...] [field=value ...]');
     out('reboot <uuid> [-F]');
     out('receive [-f <filename>]');
-    out('reprovision [-f <filename>]');
+    out('reprovision <uuid> [-f <filename>]');
     out('rollback-snapshot <uuid> <snapname>');
     out('send <uuid> [target]');
     out('start <uuid> [option=value ...]');

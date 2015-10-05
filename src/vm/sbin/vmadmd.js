@@ -34,6 +34,7 @@ var events = require('events');
 var execFile = cp.execFile;
 var fs = require('fs');
 var lock = require('/usr/vm/node_modules/locker').lock;
+var mod_nic = require('/usr/vm/node_modules/nic');
 var net = require('net');
 var VM = require('/usr/vm/node_modules/VM');
 var onlyif = require('/usr/node/node_modules/onlyif');
@@ -2203,13 +2204,7 @@ function main()
 
             VM.lookup({}, {fields: lookup_fields}, function (e, vmobjs) {
                 async.forEachSeries(vmobjs, function (obj, upg_cb) {
-                    upgradeVM(obj, lookup_fields, function (upg_err, vmobj) {
-
-                        if (upg_err) {
-                            log.error(upg_err, 'failed to upgrade VM '
-                                + vmobj.uuid);
-                        }
-
+                    function finishUpgrade(vmobj) {
                         if (!seen_vms.hasOwnProperty(vmobj.zonename)) {
                             seen_vms[vmobj.zonename] = {
                                 brand: vmobj.brand,
@@ -2279,6 +2274,70 @@ function main()
                             log.debug('ignoring non-kvm VM ' + vmobj.uuid);
                             upg_cb();
                         }
+                    }
+
+                    upgradeVM(obj, lookup_fields, function (upg_err, vmobj) {
+                        var nic;
+
+                        if (upg_err) {
+                            log.error(upg_err, 'failed to upgrade VM '
+                                + vmobj.uuid);
+                        }
+
+                        // See if this is a newer VM that uses 'ips'
+                        for (nic in vmobj.nics) {
+                            if (nic.hasOwnProperty('ips')) {
+                                finishUpgrade(vmobj);
+                                return;
+                            }
+                        }
+
+                        mod_nic.upgradeNics(vmobj, function (nic_err) {
+                            var upgrade_payload = {'update_nics': []};
+                            var update_nic;
+                            var do_push;
+
+                            if (nic_err) {
+                                log.error(nic_err);
+                            }
+
+                            for (nic in vmobj.nics) {
+                                nic = vmobj.nics[nic];
+                                update_nic = { 'mac': nic.mac };
+                                do_push = false;
+                                if (nic.hasOwnProperty('ips')) {
+                                    update_nic.ips = nic.ips;
+                                    do_push = true;
+                                }
+                                if (nic.hasOwnProperty('gateways')) {
+                                    update_nic.gateways = nic.gateways;
+                                    do_push = true;
+                                }
+                                if (do_push) {
+                                    upgrade_payload.update_nics.push(
+                                        update_nic);
+                                }
+                            }
+
+                            log.info('updating ' + vmobj.uuid + ' with: '
+                                + JSON.stringify(upgrade_payload));
+
+                            VM.update(vmobj.uuid, upgrade_payload, {'log': log},
+                                function (update_err) {
+
+                                if (update_err) {
+                                    log.error({
+                                        'err': update_err,
+                                        'payload': upgrade_payload
+                                    });
+                                } else {
+                                    log.info({'payload': upgrade_payload},
+                                        'performed VM.update');
+                                }
+
+                                finishUpgrade(vmobj);
+                            });
+                        });
                     });
                 });
             });

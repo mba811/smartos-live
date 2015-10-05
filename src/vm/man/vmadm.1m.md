@@ -14,7 +14,7 @@ modify and delete virtual machines on the local system.
 IMPORTANT: Support for LX VMs is currently limited and experimental. This means
 it is very likely to change in major ways without notice. Also: not all the LX
 functionality that *is* implemented is documented yet. The documentation will
-be updated as things stablize.
+be updated as things stabilize.
 
 The primary reference for a VM is its UUID. Most commands operate on VMs by
 UUID. In SmartOS, there are included bash tab-completion rules so that you can
@@ -616,7 +616,7 @@ tab-complete UUIDs rather than having to type them out for every command.
         unit used is the percentage of a single CPU that can be used by the VM.
         Eg. a value of 300 means up to 3 full CPUs.
 
-        type: integer (percentage of single CPUs)
+        type: integer (percentage of single CPUs, set to 0 for no cap)
         vmtype: OS,KVM
         listable: yes
         create: yes
@@ -948,7 +948,7 @@ tab-complete UUIDs rather than having to type them out for every command.
 
         This property can be used to mount additional filesystems into an OS
         VM. It is primarily intended for SDC special VMs. The value is an
-        array of objects. The properties available are listed below under the 
+        array of objects. The properties available are listed below under the
         filesystems.*.<property> options. Those objects can have the following
         properties: source, target, raw (optional), type and options.
 
@@ -1370,10 +1370,28 @@ tab-complete UUIDs rather than having to type them out for every command.
 
     nics.*.gateway:
 
-        The IPv4 router on this network (not required if using DHCP)
+        The IPv4 router on this network (not required if using DHCP). This
+        property should be considered deprecated in favor of using
+        nics.*.gateways.
 
         type: string (IPv4 address)
         vmtype: OS,KVM
+        listable: yes (see above)
+        create: yes
+        update: yes
+
+    nics.*.gateways:
+
+        An array of IPv4 addresses to use as the network gateway. If multiple
+        addresses are specified, the OS-specific behaviour will apply
+        (e.g., round robining on SmartOS). This property is not required if
+        using DHCPv4.
+
+        The interface for updating this field is liable to change in the
+        future to make it easier to add or remove addresses.
+
+        type: array (of IPv4 addresses)
+        vmtype: OS,LX,KVM
         listable: yes (see above)
         create: yes
         update: yes
@@ -1392,10 +1410,33 @@ tab-complete UUIDs rather than having to type them out for every command.
     nics.*.ip:
 
         IPv4 unicast address for this NIC, or 'dhcp' to obtain address via
-        DHCP.
+        DHCPv4. This property should be considered deprectated in favor of using
+        nics.*.ips.
 
         type: string (IPv4 address or 'dhcp')
         vmtype: OS,KVM
+        listable: yes (see above)
+        create: yes
+        update: yes
+
+    nics.*.ips:
+
+        An array of IPv4 or IPv6 addresses to assign to this NIC. The addresses
+        should specify their routing prefix in CIDR notation. The strings
+        'dhcp' (DHCPv4) and 'addrconf' (SLAAC or DHCPv6) can also be used to
+        obtain the address dynamically.
+
+        Since KVM instances receive their static IP addresses from QEMU via
+        DHCPv4, they can only receive a single IPv4 address. Therefore, the only
+        values that should be used are one of 'dhcp' or an IPv4 address. To
+        assign further IP addresses to them, use nics.*.allowed_ips and
+        configure them from inside the guest operating system.
+
+        The interface for updating this field is liable to change in the
+        future to make it easier to add or remove addresses.
+
+        type: array (of IP addresses with routing prefixes, 'dhcp' or 'addrconf')
+        vmtype: OS,LX,KVM
         listable: yes (see above)
         create: yes
         update: yes

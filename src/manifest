@@ -288,6 +288,7 @@ f usr/vm/node_modules/dladm.js 0444 root bin
 f usr/vm/node_modules/expander.js 0444 root bin
 f usr/vm/node_modules/ip.js 0444 root bin
 f usr/vm/node_modules/locker.js 0444 root bin
+f usr/vm/node_modules/nic.js 0444 root bin
 d usr/vm/node_modules/mkdirp 0755 root root
 f usr/vm/node_modules/mkdirp/LICENSE 0444 root root
 f usr/vm/node_modules/mkdirp/package.json 0444 root root
@@ -807,7 +808,6 @@ f usr/share/man/man1m/diskinfo.1m 0444 root bin
 f usr/share/man/man1m/disklayout.1m 0444 root bin
 f usr/share/man/man1m/fwadm.1m 0444 root bin
 f usr/share/man/man1m/mkzpool.1m 0444 root bin
-f usr/share/man/man1m/netservices.1m 0444 root bin
 f usr/share/man/man1m/tzreload.1m 0444 root bin
 f usr/share/man/man1m/sys-unconfig.1m 0444 root bin
 f usr/share/man/man1m/ziostat.1m 0444 root bin

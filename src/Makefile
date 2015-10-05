@@ -80,7 +80,15 @@ JS_CHECK_TARGETS=\
 	node_modules/{system,onlyif,net-boot-config}.js \
 	net-boot-config \
 	vm/sbin/*.js \
-	vm/node_modules/{dladm,expander,proptable,utils,VM,qmp,openonerrlogger}.js \
+	vm/node_modules/dladm.js \
+	vm/node_modules/expander.js \
+	vm/node_modules/ip.js \
+	vm/node_modules/nic.js \
+	vm/node_modules/proptable.js \
+	vm/node_modules/utils.js \
+	vm/node_modules/VM.js \
+	vm/node_modules/qmp.js \
+	vm/node_modules/openonerrlogger.js \
 	vm/node_modules/vmload/*.js \
 	vm/node_modules/sysevent-stream.js \
 	img/lib/*.js \
@@ -98,6 +106,7 @@ JS_CHECK_TARGETS=\
 	vm/tests/test-lastexited.js \
 	vm/tests/test-openonerrlogger.js \
 	vm/tests/test-reboot.js \
+	vm/tests/test-reprovision.js \
 	vm/tests/test-spoof-opts.js \
 	vm/tests/test-tmpfs.js \
 	vm/tests/test-update.js \
@@ -119,7 +128,10 @@ C_CHECK_TARGETS=\
 	zfs_recv.c \
 	zfs_send.c \
 	zoneevent.c \
-	sysevent.c
+	sysevent.c \
+	dockerinit/src/dockerexec.c \
+	dockerinit/src/dockerinit.c \
+	dockerinit/src/docker-common.c
 
 #
 # Generic flags we apply by default to everything.

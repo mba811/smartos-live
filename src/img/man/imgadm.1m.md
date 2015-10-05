@@ -1,4 +1,4 @@
-# imgadm(1m) -- Manage SmartOS virtual machine images
+# imgadm(1M) -- Manage SmartOS virtual machine images
 
 ## SYNOPSIS
 
@@ -6,7 +6,7 @@
 
     imgadm sources [<options>]             list and edit image sources
 
-    imgadm avail                           list available images
+    imgadm avail [<filters>]               list available images
     imgadm show <uuid|docker-repo-tag>     show manifest of an available image
 
     imgadm import [-P <pool>] <uuid|docker repo:tag>
@@ -114,7 +114,7 @@ UUID.
             # Legacy SDC 6.5 DSAPI (deprecated)
             imgadm sources -a https://datasets.joyent.com/datasets -t dsapi
 
-    imgadm avail
+    imgadm avail [<filters>]
 
         List available images from all sources.
         This is not supported for Docker sources.
@@ -132,7 +132,7 @@ UUID.
                                       "published_at,name".
 
         Fields for "-o" and "-s":
-            Any of the manifest fields (see `imgadm list -j` output) plus the
+            Any of the manifest fields (see `imgadm avail -j` output) plus the
             following computed fields for convenience.
 
             published_date            just the date part of `published_at`
@@ -354,7 +354,7 @@ UUID.
                            then "PATH.imgmanifest" and "PATH.zfs[.EXT]" are
                            created.
             -c <comp>, --compression=<comp>
-                           One of "none", "gz" or "bzip2" for the compression
+                           One of "none", "gz", "bzip2" or "xz" for the compression
                            to use on the image file, if any. Default is "none".
             -i             Build an incremental image (based on the "@final"
                            snapshot of the source image for the VM).
@@ -593,4 +593,4 @@ The following exit values are returned:
 
 ## SEE ALSO
 
-    vmadm(1m), zfs(1m)
+    vmadm(1M), zfs(1M)
